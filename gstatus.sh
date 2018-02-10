@@ -14,12 +14,20 @@ function git-upstream-branch {
     git rev-parse --symbolic-full-name --abbrev-ref HEAD@{u}
 }
 
+function git-diff-ahead {
+    git cherry -v | wc -l
+}
+
+function git-diff-behind {
+    git log HEAD..$(git-upstream-branch) --oneline | wc -l
+}
+
 # Give a string with the current braching status :
 # [BRANCH] I [UPSTREAM] [DIFF]
 #     BRANCH : (bold blue) the current branch
 #     I : (yellow) a nice branch icon from Font Awesome
 #     UPSTREAM : (italic yellow) The upstream branch
-#     DIFF : Diff with upstream
+#     DIFF : Diff with upstream (show icons and commits count behind/ahead or a OK symbol if aligned)
 function branching-status {
     printf "\033[1;34m$(git-current-branch)"
 
@@ -29,7 +37,12 @@ function branching-status {
     printf "\033[3;33m$(git-upstream-branch)"
 
     # diff
-    #printf 'diff'
+    # Font Awesome icons : f0fe=plus-square ; f146=minus-square ; f14a=check-square
+    add=$(git-diff-ahead)
+    sub=$(git-diff-behind)
+    [ $add != 0 ] && printf " \033[0;32m\uf0fe $add"
+    [ $sub != 0 ] && printf " \033[0;31m\uf146 $sub"
+    [[ $add == 0 && $sub == 0 ]] && printf ' \033[0;34m\uf14a'
 
     # standard formating + chariage return at EOL ;)
     printf '\033[0;00m\n'
