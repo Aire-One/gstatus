@@ -50,7 +50,7 @@ function branching-status {
 
 # Give a short git status
 function git-status {
-    git status -s
+    git status -s -unormal --column
 }
 
 # Give a quick overview of git stash
