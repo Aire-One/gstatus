@@ -3,15 +3,18 @@
 # This script aims to display a nice git status.
 # It will give a colored and easy to read quick overview of the current status.
 #
-# No args for now, maybe some quick informations in the future o/
+# No args for now, maybe some shortcuts in the future o/
 
 
 function git-current-branch {
-    git branch | awk '/* / { print $2 }'
+    git rev-parse --symbolic-full-name --abbrev-ref HEAD --sq
 }
 
 function git-upstream-branch {
-    git rev-parse --symbolic-full-name --abbrev-ref HEAD@{u}
+    git rev-parse --symbolic-full-name --abbrev-ref HEAD@{u} &>/dev/null
+    if [ $? -eq 0 ] ; then
+        git rev-parse --symbolic-full-name --abbrev-ref HEAD@{u} --sq
+    fi
 }
 
 function git-diff-ahead {
@@ -31,18 +34,22 @@ function git-diff-behind {
 function branching-status {
     printf "\033[1;34m$(git-current-branch)"
 
-    # f126 is the unicone character for git branch icon from Font Awesome
-    printf '\033[0;33m \uf126 '
+    upstream=$(git-upstream-branch)
 
-    printf "\033[3;33m$(git-upstream-branch)"
+    if [[ -n $upstream ]] ; then
+        # f126 is the unicone character for git branch icon from Font Awesome
+        printf '\033[0;33m \uf126 '
 
-    # diff
-    # Font Awesome icons : f0fe=plus-square ; f146=minus-square ; f14a=check-square
-    add=$(git-diff-ahead)
-    sub=$(git-diff-behind)
-    [ $add != 0 ] && printf " \033[0;32m\uf0fe $add"
-    [ $sub != 0 ] && printf " \033[0;31m\uf146 $sub"
-    [[ $add == 0 && $sub == 0 ]] && printf ' \033[0;34m\uf14a'
+        printf "\033[3;33m$upstream"
+
+        # diff
+        # Font Awesome icons : f0fe=plus-square ; f146=minus-square ; f14a=check-square
+        add=$(git-diff-ahead)
+        sub=$(git-diff-behind)
+        [ $add != 0 ] && printf " \033[0;32m\uf0fe $add"
+        [ $sub != 0 ] && printf " \033[0;31m\uf146 $sub"
+        [[ $add == 0 && $sub == 0 ]] && printf ' \033[0;34m\uf14a'
+    fi
 
     # standard formating + chariage return at EOL ;)
     printf '\033[0;00m\n'
@@ -61,4 +68,3 @@ function git-stash-status {
 branching-status
 git-status
 git-stash-status
-
