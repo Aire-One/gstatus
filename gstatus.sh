@@ -30,7 +30,8 @@ function git-diff-behind {
 #     BRANCH : (bold blue) the current branch
 #     I : (yellow) a nice branch icon from Font Awesome
 #     UPSTREAM : (italic yellow) The upstream branch
-#     DIFF : Diff with upstream (show icons and commits count behind/ahead or a OK symbol if aligned)
+#     DIFF : Diff with upstream (show icons and commits count behind/ahead or
+#       a OK symbol if aligned)
 function branching-status {
     printf "\033[1;34m$(git-current-branch)"
 
@@ -43,7 +44,8 @@ function branching-status {
         printf "\033[3;33m$upstream"
 
         # diff
-        # Font Awesome icons : f0fe=plus-square ; f146=minus-square ; f14a=check-square
+        # Font Awesome icons :
+        #   f0fe=plus-square ; f146=minus-square ; f14a=check-square
         add=$(git-diff-ahead)
         sub=$(git-diff-behind)
         [ $add != 0 ] && printf " \033[0;32m\uf0fe $add"
@@ -68,3 +70,4 @@ function git-stash-status {
 branching-status
 git-status
 git-stash-status
+
