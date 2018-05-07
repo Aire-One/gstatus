@@ -48,8 +48,8 @@ function branching-status {
         #   f0fe=plus-square ; f146=minus-square ; f14a=check-square
         add=$(git-diff-ahead)
         sub=$(git-diff-behind)
-        [ $add != 0 ] && printf " \033[0;32m\uf0fe $add"
-        [ $sub != 0 ] && printf " \033[0;31m\uf146 $sub"
+        [ $add != 0 ] && printf "\033[0m \033[0;32m\uf0fe $add"
+        [ $sub != 0 ] && printf "\033[0m \033[0;31m\uf146 $sub"
         [[ $add == 0 && $sub == 0 ]] && printf ' \033[0;34m\uf14a'
     fi
 
