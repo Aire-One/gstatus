@@ -47,14 +47,16 @@ function branching-status {
         # Font Awesome icons :
         #   f0fe=plus-square ; f146=minus-square ; f14a=check-square ;
         #   ufd3= times-square
+        #   f055=plus-circle ; f056=minus-cicle ; f058=check-square ;
+        #   f057=times-circle
         add=$(git-diff-ahead)
         sub=$(git-diff-behind)
 
         printf " "
-        # [ $add != 0 ] && [ $sub != 0 ] && printf "\033[0m \033[0;33m\uf2d3 : "
-        [ $add != 0 ] && printf "\033[0m\033[0;32m\uf0fe $add "
-        [ $sub != 0 ] && printf "\033[0m\033[0;31m\uf146 $sub "
-        [[ $add == 0 && $sub == 0 ]] && printf ' \033[0;34m\uf14a'
+        # [ $add != 0 ] && [ $sub != 0 ] && printf "\033[0m \033[0;33m\uf057 : "
+        [ $add != 0 ] && printf "\033[0m\033[0;32m\uf055 $add "
+        [ $sub != 0 ] && printf "\033[0m\033[0;31m\uf056 $sub "
+        [[ $add == 0 && $sub == 0 ]] && printf "\033[0;34m\uf058"
     fi
 
     # standard formating + chariage return at EOL ;)
