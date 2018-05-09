@@ -45,11 +45,15 @@ function branching-status {
 
         # diff
         # Font Awesome icons :
-        #   f0fe=plus-square ; f146=minus-square ; f14a=check-square
+        #   f0fe=plus-square ; f146=minus-square ; f14a=check-square ;
+        #   ufd3= times-square
         add=$(git-diff-ahead)
         sub=$(git-diff-behind)
-        [ $add != 0 ] && printf "\033[0m \033[0;32m\uf0fe $add"
-        [ $sub != 0 ] && printf "\033[0m \033[0;31m\uf146 $sub"
+
+        printf " "
+        # [ $add != 0 ] && [ $sub != 0 ] && printf "\033[0m \033[0;33m\uf2d3 : "
+        [ $add != 0 ] && printf "\033[0m\033[0;32m\uf0fe $add "
+        [ $sub != 0 ] && printf "\033[0m\033[0;31m\uf146 $sub "
         [[ $add == 0 && $sub == 0 ]] && printf ' \033[0;34m\uf14a'
     fi
 
