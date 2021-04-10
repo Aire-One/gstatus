@@ -37,9 +37,8 @@ git_current_branch() {
 
 # Gives the upstream branch.
 git_upstream_branch() {
-    git rev-parse --symbolic-full-name --abbrev-ref HEAD@{u} 1>& /dev/null
-    if [ $? -eq 0 ] ; then
-        git rev-parse --symbolic-full-name --abbrev-ref HEAD@{u} --sq
+    if git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' 1>& /dev/null; then
+        git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' --sq
     fi
 }
 
@@ -52,13 +51,13 @@ git_remote_branches() {
 # Gives the number of commit ahead from upstream.
 # $1 string Remote to check.
 git_diff_ahead() {
-    git cherry -v $1 | wc -l
+    git cherry -v "${1}" | wc -l
 }
 
 # Gives the number of commit behind upstream.
 # $1 string Remote to check.
 git_diff_behind() {
-    git log HEAD..$1 --oneline | wc -l
+    git log HEAD.."${1}" --oneline | wc -l
 }
 
 # Gives the branching status for a given remote.
@@ -66,14 +65,14 @@ git_diff_behind() {
 # $2 string The style to apply to the remote/branch name.
 branching_status() {
     # f126 is the unicone character for git branch icon from Font Awesome
-    printf "${STYLE_RESET}${2}${1}"
+    printf '%b%b%s' "${STYLE_RESET}" "${2}" "${1}"
 
-    add=$(git_diff_ahead $1)
-    sub=$(git_diff_behind $1)
+    add=$(git_diff_ahead "${1}")
+    sub=$(git_diff_behind "${1}")
 
-    [ $add != 0 ] && printf "${STYLE_RESET}${STYLE_AHEAD_COMMITS}${add}"
-    [ $sub != 0 ] && printf "${STYLE_RESET}${STYLE_BEHIND_COMMITS}${sub}"
-    [ $add = 0 ] && [ $sub = 0 ] && printf "${STYLE_RESET}${STYLE_EVEN_COMMITS}"
+    [ "${add}" != 0 ] && printf '%b%b%s' "${STYLE_RESET}" "${STYLE_AHEAD_COMMITS}" "${add}"
+    [ "${sub}" != 0 ] && printf '%b%b%s' "${STYLE_RESET}" "${STYLE_BEHIND_COMMITS}" "${sub}"
+    [ "${add}" = 0 ] && [ "${sub}" = 0 ] && printf '%b%b' "${STYLE_RESET}" "${STYLE_EVEN_COMMITS}"
 }
 
 # Gives the current braching status.
@@ -88,22 +87,24 @@ branching_status() {
 #     DIFF     : Diff with upstream (commits count behind/ahead).
 # Note: The last part (II [REMOTE] [DIFF]) is repeated for each remotes we find.
 git_branching_status() {
-    printf "${STYLE_RESET}${STYLE_CURRENT_BRANCH}$(git_current_branch)"
-    printf "${STYLE_RESET}${SEPARATOR_SECTION_BRANCHES}"
+    current=$(git_current_branch)
+
+    printf '%b%b%s' "${STYLE_RESET}" "${STYLE_CURRENT_BRANCH}" "${current}"
+    printf '%b%b' "${STYLE_RESET}" "${SEPARATOR_SECTION_BRANCHES}"
 
     upstream=$(git_upstream_branch)
     if [ -n "$upstream" ] ; then
-        branching_status $upstream "${STYLE_UPSTREAM_BRANCHES}"
+        branching_status "${upstream}" "${STYLE_UPSTREAM_BRANCHES}"
     fi
 
-    for i in $(git_remote_branches) ; do
-        if [ $i = $upstream ] ; then continue; fi
-        printf "${STYLE_RESET}${SEPARATOR_BRANCHES_REMOTE}"
-        branching_status $i "${STYLE_REMOTES_BRANCHES}"
+    for i in $(git branch --remotes --list "*${current}") ; do
+        if [ "${i}" = "${upstream}" ] ; then continue; fi
+        printf '%b%b' "${STYLE_RESET}" "${SEPARATOR_BRANCHES_REMOTE}"
+        branching_status "${i}" "${STYLE_REMOTES_BRANCHES}"
     done
 
     # standard formating + chariage return at EOL ;)
-    printf "${STYLE_RESET}\n"
+    printf '%b\n' "${STYLE_RESET}"
 }
 
 # Give a short git status
@@ -119,4 +120,4 @@ git_stash_status() {
 git_branching_status
 git_status
 git_stash_status
-printf ${STYLE_RESET}
+printf '%b' "${STYLE_RESET}"
