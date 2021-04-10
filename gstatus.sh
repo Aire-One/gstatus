@@ -46,11 +46,7 @@ git_upstream_branch() {
 # Find remotes with the same branch.
 git_remote_branches() {
     current=$(git_current_branch)
-    for i in $(git branch -r) ; do
-        if [ $i = "*$current" ] ; then
-            echo $i
-        fi
-    done
+    git branch --remotes --list "*${current}"
 }
 
 # Gives the number of commit ahead from upstream.
