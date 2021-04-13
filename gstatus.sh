@@ -4,6 +4,9 @@
 
 # Configuration:
 #
+# escape printf builtin that does not necessarly support unicode
+alias printf='env printf'
+
 # The following globals variables are used to configure the output of gstatus.
 # You can change these string value to whatever you want. Including
 # colors/styles/icons/... of your chose.
@@ -37,7 +40,7 @@ git_current_branch() {
 
 # Gives the upstream branch.
 git_upstream_branch() {
-    if git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' 1>& /dev/null; then
+    if git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' > /dev/null 2>&1; then
         git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' --sq
     fi
 }
