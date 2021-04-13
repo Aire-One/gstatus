@@ -4,9 +4,6 @@
 
 # Configuration:
 #
-# escape printf builtin that does not necessarly support unicode
-alias printf='env printf'
-
 # The following globals variables are used to configure the output of gstatus.
 # You can change these string value to whatever you want. Including
 # colors/styles/icons/... of your chose.
@@ -32,24 +29,17 @@ STYLE_AHEAD_COMMITS=' \e[0m\e[0;32m\uf055'
 # Style for behind commits.
 STYLE_BEHIND_COMMITS=' \e[0m\e[0;31m\uf056'
 
+# Escape printf builtin that does not necessarly support unicode.
+alias printf='env printf'
 
-# Gives the current branch.
-git_current_branch() {
-    git rev-parse --symbolic-full-name --abbrev-ref HEAD --sq
-}
+# Constants:
+CURRENT_BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD --sq)
+REMOTES_BRANCHES=$(git branch --remotes --list "*${CURRENT_BRANCH}")
+UPSTREAM_BRANCH=''
+git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' > /dev/null 2>&1 \
+    && UPSTREAM_BRANCH=$(git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' --sq) \
+    || UPSTREAM_BRANCH=''
 
-# Gives the upstream branch.
-git_upstream_branch() {
-    if git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' > /dev/null 2>&1; then
-        git rev-parse --symbolic-full-name --abbrev-ref 'HEAD@{u}' --sq
-    fi
-}
-
-# Find remotes with the same branch.
-git_remote_branches() {
-    current=$(git_current_branch)
-    git branch --remotes --list "*${current}"
-}
 
 # Gives the number of commit ahead from upstream.
 # $1 string Remote to check.
@@ -90,18 +80,15 @@ branching_status() {
 #     DIFF     : Diff with upstream (commits count behind/ahead).
 # Note: The last part (II [REMOTE] [DIFF]) is repeated for each remotes we find.
 git_branching_status() {
-    current=$(git_current_branch)
-
-    printf '%b%b%s' "${STYLE_RESET}" "${STYLE_CURRENT_BRANCH}" "${current}"
+    printf '%b%b%s' "${STYLE_RESET}" "${STYLE_CURRENT_BRANCH}" "${CURRENT_BRANCH}"
     printf '%b%b' "${STYLE_RESET}" "${SEPARATOR_SECTION_BRANCHES}"
 
-    upstream=$(git_upstream_branch)
-    if [ -n "$upstream" ] ; then
-        branching_status "${upstream}" "${STYLE_UPSTREAM_BRANCHES}"
+    if [ -n "$UPSTREAM_BRANCH" ] ; then
+        branching_status "${UPSTREAM_BRANCH}" "${STYLE_UPSTREAM_BRANCHES}"
     fi
 
-    for i in $(git branch --remotes --list "*${current}") ; do
-        if [ "${i}" = "${upstream}" ] ; then continue; fi
+    for i in $REMOTES_BRANCHES ; do
+        if [ "${i}" = "${UPSTREAM_BRANCH}" ] ; then continue; fi
         printf '%b%b' "${STYLE_RESET}" "${SEPARATOR_BRANCHES_REMOTE}"
         branching_status "${i}" "${STYLE_REMOTES_BRANCHES}"
     done
