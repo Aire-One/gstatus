@@ -13,24 +13,58 @@ alias printf='env printf'
 # The defaults are the values I use. I do use fontawesome and font ligatures,
 # so it can be a bit weird if your terminal don't support that.
 
+# Foreground colors
+FG_BLACK='\e[30m'
+FG_RED='\e[31m'
+FG_GREEN='\e[32m'
+FG_BROWN='\e[33m'
+FG_BLUE='\e[34m'
+FG_PURPLE='\e[35m'
+FG_CYAN='\e[36m'
+FG_WHITE='\e[37m'
+
+# Background colors
+BG_BLACK='\e[40m'
+BG_RED='\e[41m'
+BG_GREEN='\e[42m'
+BG_BROWN='\e[43m'
+BG_BLUE='\e[44m'
+BG_PURPLE='\e[45m'
+BG_CYAN='\e[46m'
+BG_WHITE='\e[47m'
+
+# Text format
+NORMAL='\e[0m'
+BOLD='\e[1m'
+UNDERLINE='\e[4m'
+BLINK='\e[5m'
+
+# Special characters
+SPACE=' '
+BRANCH='\uf126'
+BRANCH_SEP='||'
+TICK='\uf058'
+PLUS='\uf055'
+MINUS='\uf056'
+
 # Reset.
 STYLE_RESET='\e[0;00m'
 # Current branch style.
-STYLE_CURRENT_BRANCH='\e[1;34m'
+STYLE_CURRENT_BRANCH=${FMT_BOLD}${FG_BLUE}
 # Separator between local and remote branches
 SEPARATOR_SECTION_BRANCHES=''
 # Separator between remotes branches.
-SEPARATOR_BRANCHES_REMOTE=' \e[1;34m||'
+SEPARATOR_BRANCHES_REMOTE=${SPACE}${BOLD}${FG_BLUE}${BRANCH_SEP}
 # Upstream branch style.
-STYLE_UPSTREAM_BRANCHES=' \e[1;33m\uf126 '
+STYLE_UPSTREAM_BRANCHES=${SPACE}${BOLD}${FG_BROWN}${BRANCH}${SPACE}
 # Remote branches style.
-STYLE_REMOTES_BRANCHES=' \e[0;33m\uf126 '
+STYLE_REMOTES_BRANCHES=${SPACE}${NORMAL}${FG_BROWN}${BRANCH}${SPACE}
 # Style for even commits.
-STYLE_EVEN_COMMITS=' \e[0;34m\uf058'
+STYLE_EVEN_COMMITS=${SPACE}${NORMAL}${FG_BLUE}${TICK}
 # Style for ahead commits.
-STYLE_AHEAD_COMMITS=' \e[0m\e[0;32m\uf055'
+STYLE_AHEAD_COMMITS=${SPACE}${NORMAL}${FG_GREEN}${PLUS}
 # Style for behind commits.
-STYLE_BEHIND_COMMITS=' \e[0m\e[0;31m\uf056'
+STYLE_BEHIND_COMMITS=${SPACE}${NORMAL}${FG_RED}${MINUS}
 
 
 # Gives the current branch.
