@@ -50,7 +50,7 @@ MINUS='\uf056'
 # Reset.
 STYLE_RESET='\e[0;00m'
 # Current branch style.
-STYLE_CURRENT_BRANCH=${FMT_BOLD}${FG_BLUE}
+STYLE_CURRENT_BRANCH=${BOLD}${FG_BLUE}
 # Separator between local and remote branches
 SEPARATOR_SECTION_BRANCHES=''
 # Separator between remotes branches.
